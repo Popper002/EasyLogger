@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/time.h> // Per gettimeofday
+#include <syslog.h>
 
 /*return a the log_level in string format */
 char *get_log_level(enum log_level level)
@@ -49,9 +50,12 @@ int write_buffer(FILE *fp, char buffer[256], enum log_level level)
 
     char time_stamp[64];
     strftime(time_stamp, sizeof(time_stamp), "%Y-%m-%d %H:%M:%S", tm_info); // Formatta il tempo
+
+    //generate the string with the full current time 
     snprintf(time_stamp + strlen(time_stamp), sizeof(time_stamp) - strlen(time_stamp), ".%03ld", tv.tv_usec / 1000); // Aggiungi i millisecondi
 
     rc = fprintf(fp, "[%s]-->[Pid:%d]-->[%s]-->[%s] \n", get_log_level(level), getpid(), time_stamp, buffer);
+    rc = write_on_system_log(buffer, "logger");
     if (rc < 0)
     {
         fprintf(stderr, "%s %d Error: NULL File pointer with errno: %d..\n", __FILE__, __LINE__, errno);
@@ -60,6 +64,26 @@ int write_buffer(FILE *fp, char buffer[256], enum log_level level)
 
     fflush(fp);
     return rc;
+}
+
+int write_on_system_log(char buffer[256], char* program_name)
+{
+    int rc;
+    if(program_name == NULL)
+    {
+        return EINVAL; 
+    }
+    #ifdef  LINUX_ 
+    openlog (program_name, LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
+
+    syslog (LOG_MAKEPRI(LOG_LOCAL1, LOG_NOTICE), "Program started by User %d", getuid ());
+
+    syslog (LOG_INFO, buffer);
+
+    closelog();
+
+    return 0;
+    #endif
 }
 
 int main(int argc, char const *argv[])
@@ -93,24 +117,8 @@ int main(int argc, char const *argv[])
         if (fgets(buffer, sizeof(buffer), stdin) == NULL) 
         {
             fprintf(stderr, "Invalid input, enter the debug level and the content to log..\n");
-            // Svuota il buffer di input
-            // int c;
-            /*
-            *
-            * Cos'è il buffer di input (stdin)?
-Quando inserisci dati tramite tastiera, questi vengono memorizzati in un buffer di input (una sorta di "coda" di caratteri) prima di essere elaborati dal programma. Funzioni come fscanf, scanf, o getchar leggono i dati da questo buffer.
-
-Problema: Caratteri non consumati
-Se una funzione come fscanf non riesce a leggere correttamente i dati (ad esempio, a causa di un input non valido), i caratteri rimanenti nel buffer non vengono automaticamente rimossi. Questo può causare problemi, come:
-
-Loop infinito: Se il buffer contiene ancora dati non validi, il programma tenterà di leggerli di nuovo al prossimo ciclo, fallendo continuamente.
-Comportamento imprevedibile: I caratteri rimanenti possono interferire con le successive letture.
-Esempio del problema:
-Supponiamo che il programma stia aspettando un input del tipo int string (ad esempio, 1 hello), ma l'utente inserisce solo hello:
-            *
-            *
-            * * * * */
-            // while ((c = getchar()) != '\n' && c != EOF);
+            
+            
             fflush(stdin);
             strcpy(buffer, "INVALID INPUT");
 
