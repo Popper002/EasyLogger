@@ -3,6 +3,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/time.h> // Per gettimeofday
+
 /*return a the log_level in string format */
 char *get_log_level(enum log_level level)
 {
@@ -39,14 +41,17 @@ int write_buffer(FILE *fp, char buffer[256], enum log_level level)
     }
     int rc;
 
-    time_t time_now = time(NULL);
+    struct timeval tv;
+    gettimeofday(&tv, NULL); // Ottieni il tempo corrente con precisione fino ai microsecondi
 
-    /*remove the \0 char in the timestamp because ctime funct add \n ad the end of the string */
-    char *time_stamp = ctime(&time_now);
+    time_t time_now = tv.tv_sec;
+    struct tm *tm_info = localtime(&time_now);
 
-    time_stamp[strcspn(time_stamp, "\n")] = '\0';
+    char time_stamp[64];
+    strftime(time_stamp, sizeof(time_stamp), "%Y-%m-%d %H:%M:%S", tm_info); // Formatta il tempo
+    snprintf(time_stamp + strlen(time_stamp), sizeof(time_stamp) - strlen(time_stamp), ".%03ld", tv.tv_usec / 1000); // Aggiungi i millisecondi
 
-    rc = fprintf(fp, "[%s]-->[Pid:%d]-->[%s]-->[%s] \n",get_log_level(level),getpid(), time_stamp, buffer);
+    rc = fprintf(fp, "[%s]-->[Pid:%d]-->[%s]-->[%s] \n", get_log_level(level), getpid(), time_stamp, buffer);
     if (rc < 0)
     {
         fprintf(stderr, "%s %d Error: NULL File pointer with errno: %d..\n", __FILE__, __LINE__, errno);
