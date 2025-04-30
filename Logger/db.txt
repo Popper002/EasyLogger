@@ -1,0 +1,5 @@
+[DEBUG]-->[Wed Apr 30 11:29:14 2025]-->[ciao ]->[4148] 
+[TRACE]-->[Wed Apr 30 11:29:46 2025]-->[EXITING]->[4148] 
+[DEBUG]-->->[4172]-->[Wed Apr 30 11:29:52 2025]-->[ciaos] 
+[TRACE]-->->[4172]-->[Wed Apr 30 11:30:19 2025]-->[EXITING] 
+[DEBUG]-->[Pid:4195]-->[Wed Apr 30 11:30:24 2025]-->[ciaoo] 

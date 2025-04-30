@@ -46,7 +46,7 @@ int write_buffer(FILE *fp, char buffer[256], enum log_level level)
 
     time_stamp[strcspn(time_stamp, "\n")] = '\0';
 
-    rc = fprintf(fp, "[%s]-->[%s]-->[%s] \n", get_log_level(TRACE), time_stamp, buffer);
+    rc = fprintf(fp, "[%s]-->[Pid:%d]-->[%s]-->[%s] \n",get_log_level(level),getpid(), time_stamp, buffer);
     if (rc < 0)
     {
         fprintf(stderr, "%s %d Error: NULL File pointer with errno: %d..\n", __FILE__, __LINE__, errno);
@@ -68,7 +68,7 @@ int main(int argc, char const *argv[])
     }
 
     /*open the file*/
-    FILE *fp = fopen(argv[1], "w");
+    FILE *fp = fopen(argv[1], "a");
 
     /*check the result of fopen*/
     if (fp == NULL)
@@ -84,7 +84,8 @@ int main(int argc, char const *argv[])
         printf(">");
 
         /*while reading */
-        if (fscanf(stdin, "%d %255s", &debug_value, buffer) != 2)
+        //if (fscanf(stdin, "%255s", buffer) != 1)
+        if (fgets(buffer, sizeof(buffer), stdin) == NULL) 
         {
             fprintf(stderr, "Invalid input, enter the debug level and the content to log..\n");
             // Svuota il buffer di input
@@ -108,10 +109,12 @@ Supponiamo che il programma stia aspettando un input del tipo int string (ad ese
             fflush(stdin);
             strcpy(buffer, "INVALID INPUT");
 
-            write_buffer(fp, buffer, DEBUG);
+            write_buffer(fp, buffer, APPERRO);
 
             continue;
         }
+
+        buffer[strcspn(buffer, "\n")] = '\0';
 
         if (strcmp(buffer, ".exit") == 0)
         {
@@ -125,7 +128,7 @@ Supponiamo che il programma stia aspettando un input del tipo int string (ad ese
             break;
         }
 
-        write_buffer(fp, buffer, debug_value);
+        write_buffer(fp, buffer, atoi(argv[2]));
     }
     /* close the file is important */
     fclose(fp);
