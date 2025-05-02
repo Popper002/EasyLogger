@@ -21,4 +21,4 @@ main: src/main.c liblogger.a
 
 # Pulizia dei file generati
 clean:
-	$(RM_ALL_FILE) $(DEST_LIB)/* $(DEST_BIN)/* logger/*.o
+	$(RM_ALL_FILE) $(DEST_LIB)/*.a $(DEST_BIN)/* logger/*.o
