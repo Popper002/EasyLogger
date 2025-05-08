@@ -53,7 +53,7 @@ int write_buffer(FILE *fp, char buffer[256], enum log_level level)
     // generate the string with the full current time
     snprintf(time_stamp + strlen(time_stamp), sizeof(time_stamp) - strlen(time_stamp), ".%03ld", tv.tv_usec / 1000); // Aggiungi i millisecondi
 
-    rc = fprintf(fp, "[%s]-->[Pid:%d]-->[%s]-->[%s] \n", get_log_level(level), getpid(), time_stamp, buffer);
+    rc = fprintf(fp, "[%s]-------[Pid:%d]-------[%s]--------[%s] \n", get_log_level(level), getpid(), time_stamp, buffer);
     rc = write_on_system_log(buffer, "logger", level);
     if (rc < 0)
     {
@@ -72,7 +72,7 @@ int write_on_system_log(char buffer[256], char *program_name, enum log_level lev
     {
         return EINVAL;
     }
-#ifdef LINUX_
+#if defined(LINUX_) || defined(MAC_OS) 
     openlog(program_name, LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
 
     syslog(LOG_MAKEPRI(LOG_LOCAL1, LOG_NOTICE), "Program started by User %d", getuid());
@@ -85,5 +85,8 @@ int write_on_system_log(char buffer[256], char *program_name, enum log_level lev
     closelog();
 
     return 0;
+/*Windows syslog version*/
+#else
+
 #endif
 }

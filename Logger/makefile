@@ -1,9 +1,9 @@
 CC = gcc
-CFLAGS = -g -D LINUX_ -D MAC_OS
+CFLAGS = -g -D LINUX_ 
 DEST_LIB = lib
 DEST_BIN = bin
 RM_ALL_FILE = rm
-
+MAC = -D MAC_OS
 # Target principale per creare tutto
 all: liblogger.a main
 
