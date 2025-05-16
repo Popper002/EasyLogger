@@ -31,7 +31,7 @@ make all   # Compile logger library and Main.c for testing
 
 ---
 
-### ▶️ Running the Example [Only ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black) or on ![macOS](https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=macos&logoColor=F0F0F0)] 
+### ▶️ Running the Example [Only on   ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)  or  ![macOS](https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=macos&logoColor=F0F0F0)] 
 
 ```bash
 ./bin/main logs.txt DEBUG
