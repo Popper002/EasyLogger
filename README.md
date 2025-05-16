@@ -27,6 +27,7 @@ It is designed for easy integration into your projects and provides functionalit
 - **Cross-Platform**: Works on both Linux and macOS.
 - **Error Handling**: Clear error messages for invalid input or file issues.
 - **Example Main**: A sample `main.c` is provided to test and demonstrate the library.
+> **Tip:** Check the `Makefile` for all available build and run options, including static and dynamic linking, cleaning, and example execution.
 
 ---
 
