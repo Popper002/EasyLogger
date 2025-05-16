@@ -32,4 +32,4 @@ main_dynamic: src/main.c liblogger.so
 	$(CC) $(CFLAGS) src/main.c -o $(DEST_BIN)/main_dynamic -L$(DEST_LIB) -llogger
 # Esecuzione del programma principale con la libreria dinamica
 run_dynamic:main_dynamic
-	LD_LIBRARY_PATH=$(DEST_LIB):$$LD_LIBRARY_PATH ./$(DEST_BIN)/main_dynamic logfile.txt 0
+	LD_LIBRARY_PATH=$(DEST_LIB):$$LD_LIBRARY_PATH ./$(DEST_BIN)/main_dynamic logfile.txt DEBUG
